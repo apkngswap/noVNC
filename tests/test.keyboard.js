@@ -1,6 +1,6 @@
 const expect = chai.expect;
 
-import Keyboard from '../core/input/keyboard.js';
+import Keyboard from '../core/input/keyboard-custom.js';
 
 describe('Key Event Handling', function () {
     "use strict";

@@ -12,7 +12,7 @@ import Base64 from "./base64.js";
 import { toSigned32bit } from './util/int.js';
 import { isWindows } from './util/browser.js';
 import { uuidv4 } from './util/strings.js';
-import UI from '../app/ui.js';
+import UI from '../app/ui-custom.js';
 
 export default class Display {
     constructor(target, isPrimaryDisplay) {

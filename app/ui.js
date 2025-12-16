@@ -37,8 +37,8 @@ import { isTouchDevice, isSafari, hasScrollbarGutter, dragThreshold, supportsBin
 import { setCapture, getPointerEvent } from '../core/util/events.js';
 import KeyTable from "../core/input/keysym.js";
 import keysyms from "../core/input/keysymdef.js";
-import Keyboard from "../core/input/keyboard.js";
-import RFB from "../core/rfb.js";
+import Keyboard from "../core/input/keyboard-custom.js";
+import RFB from "../core/rfb-custom.js";
 import { MouseButtonMapper, XVNC_BUTTONS } from "../core/mousebuttonmapper.js";
 import * as WebUtil from "./webutil.js";
 import { uuidv4 } from '../core/util/strings.js';
