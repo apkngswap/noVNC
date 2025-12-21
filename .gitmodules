@@ -1,3 +1,0 @@
-[submodule "utils/websockify"]
-	path = utils/websockify
-	url = https://github.com/apkngswap/websockify.git

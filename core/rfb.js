@@ -19,7 +19,7 @@ import EventTargetMixin from './util/eventtarget.js';
 import Display from "./display.js";
 import Inflator from "./inflator.js";
 import Deflator from "./deflator.js";
-import Keyboard from "./input/keyboard.js";
+import Keyboard from "./input/keyboard-custom.js";
 import initializePrinterRelay from "./output/printer.js";
 import initializeSmartcardRelay from "./output/smartcard.js";
 import GestureHandler from "./input/gesturehandler.js";
