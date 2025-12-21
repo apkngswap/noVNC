@@ -1,5 +1,6 @@
 import UI from "./ui.js";
 
+// showStatus() function removed
 UI.connectFinished = function (e) {
     UI.connected = true;
     UI.inhibitReconnect = false;
@@ -17,20 +18,10 @@ UI.connectFinished = function (e) {
     UI.rfb.focus();
 };
 
-if (typeof UI.receiveMessage === "function") {
-    const originalReceiveMessage = UI.receiveMessage;
-
-    UI.receiveMessage = function (event) {
-        if (event && event.data && event.data.action === "setvideoquality") {
-            return;
-        }
-        return originalReceiveMessage.call(UI, event);
-    };
-}
-
+// Display the desktop name in the document title
 UI.updateDesktopName = function (e) {
     UI.desktopName = e.detail.name;
-    document.title = "KasmVNC";
+    document.title = "SwapVNC";
 };
 
 export default UI;
