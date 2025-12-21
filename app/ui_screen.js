@@ -1,4 +1,4 @@
-import RFB from "../core/rfb-custom.js";
+import RFB from "../core/rfb.js";
 import * as WebUtil from "./webutil.js";
 import { isTouchDevice, isSafari, hasScrollbarGutter, dragThreshold, supportsBinaryClipboard, isFirefox, isWindows, isIOS, supportsPointerLock }
     from '../core/util/browser.js';
