@@ -13,11 +13,12 @@
     or the fragment:
         http://example.com/#host=HOST&port=PORT&encrypt=1
     -->
-    <title>KasmVNC</title>
+    <!-- TODO: Remove KasmVNC branding from the browser tab title -->
+    <title>SwapVNC</title>
 
     <meta charset="utf-8">
-
-    <!-- Icons (see app/images/icons/Makefile for what the sizes are for) -->
+    <!-- TODO: Disable Kasm favicons and use blank icon -->
+    <!--
     <link rel="icon" sizes="16x16" type="image/png" href="app/images/icons/368_kasm_logo_only_16x16.png">
     <link rel="icon" sizes="24x24" type="image/png" href="app/images/icons/368_kasm_logo_only_24x24.png">
     <link rel="icon" sizes="32x32" type="image/png" href="app/images/icons/368_kasm_logo_only_32x32.png">
@@ -30,23 +31,26 @@
     <link rel="icon" sizes="120x120" type="image/png" href="app/images/icons/368_kasm_logo_only_120x120.png">
     <link rel="icon" sizes="144x144" type="image/png" href="app/images/icons/368_kasm_logo_only_144x144.png">
     <link rel="icon" sizes="152x152" type="image/png" href="app/images/icons/368_kasm_logo_only_152x152.png">
-    <link rel="icon" sizes="192x192" type="image/png" href="app/images/icons/368_kasm_logo_only_192x192.png">
+    <link rel="icon" sizes="192x192" type="image/png" href="app/images/icons/368_kasm_logo_only_192x192.png"-->
     <!-- Firefox currently mishandles SVG, see #1419039
     <link rel="icon" sizes="any" type="image/svg+xml" href="app/images/icons/kasm-icon.svg">
     -->
-    <!-- Repeated last so that legacy handling will pick this -->
+    <!-- Repeated last so that legacy handling will pick this 
     <link rel="icon" sizes="16x16" type="image/png" href="app/images/icons/368_kasm_logo_only_16x16.png">
+    -->
 
     <!-- Apple iOS Safari settings -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <!-- Home Screen Icons (favourites and bookmarks use the normal icons) -->
-    <link rel="apple-touch-icon" sizes="60x60" type="image/png" href="app/images/icons/368_kasm_logo_only_60x60.png">
-    <link rel="apple-touch-icon" sizes="76x76" type="image/png" href="app/images/icons/368_kasm_logo_only_76x76.png">
-    <link rel="apple-touch-icon" sizes="120x120" type="image/png" href="app/images/icons/368_kasm_logo_only_120x120.png">
-    <link rel="apple-touch-icon" sizes="152x152" type="image/png" href="app/images/icons/368_kasm_logo_only_152x152.png">
-
+    <!-- TODO: remove Kasm logo from iOS home screen/bookmarks -->
+    <!-- <link rel="apple-touch-icon" sizes="60x60" type="image/png" href="app/images/icons/368_kasm_logo_only_60x60.png"> -->
+    <!-- <link rel="apple-touch-icon" sizes="76x76" type="image/png" href="app/images/icons/368_kasm_logo_only_76x76.png"> -->
+    <!-- <link rel="apple-touch-icon" sizes="120x120" type="image/png" href="app/images/icons/368_kasm_logo_only_120x120.png"> -->
+    <!-- <link rel="apple-touch-icon" sizes="152x152" type="image/png" href="app/images/icons/368_kasm_logo_only_152x152.png"> -->
+    <!-- TODO: Provide a blank Apple touch icon -->
+    <link rel="apple-touch-icon" href="data:,">
     <link rel="stylesheet" href="app/styles/base.css">
 
     <script type="module" src="app/error-handler.js"></script>
@@ -60,7 +64,31 @@
         }
     </script>
 
-    <script type="module" crossorigin="use-credentials" src="app/ui.js"></script>
+    <script type="module" crossorigin="use-credentials" src="app/ui-custom.js"></script>
+    <!-- TODO: Use blank favicon -->
+    <link rel="icon" href="data:,">
+    <!-- TODO: Extra safety for legacy browsers that still look for "shortcut icon" -->
+    <link rel="shortcut icon" href="data:,">
+
+<style>
+    /* TODO: Hide noVNC/KasmVNC control bar UI */
+    #noVNC_control_bar_anchor,
+    #noVNC_control_bar,
+    #noVNC_control_bar_handle,
+    #noVNC_control_bar_hint{
+        display: none !important;
+    }
+
+    /* TODO: Hide the floating keyboard control button */
+    #noVNC_keyboard_control {
+        display: none !important;
+    }
+
+    /* TODO: Hide KasmVNC "Connecting..." transition/splash overlay background */
+    #noVNC_transition {
+        background: none !important;
+    }
+</style>
 </head>
 
 <body>
@@ -68,7 +96,8 @@
     <div id="noVNC_fallback_error" class="noVNC_center">
         <div>
             <div id="noVNC_close_error" onclick="document.getElementById('noVNC_fallback_error').remove()"></div>
-            <div>KasmVNC encountered an error:</div>
+            <!-- TODO: Remove Kasm from error text -->
+            <div>Connection error:</div>
             <br>
             <div id="noVNC_fallback_errormsg"></div>
         </div>
@@ -87,14 +116,15 @@
 
             <div class="noVNC_scroll">
 
-                <h1 class="noVNC_logo">
+                <!-- TODO: Remove/Hide KasmVNC logo block (branding) -->
+                <!-- <h1 class="noVNC_logo">
                     <a href="https://www.kasmweb.com/kasmvnc" target="_blank"
                         alt="KasmVNC Learn More"
                         title="KasmVNC Learn More">
                         <img src="app/images/icons/kasm_logo.svg" />
                     </a>
-                </h1>
-
+                </h1> -->
+                
                 <!-- Drag/Pan the viewport -->
                 <div class="noVNC_button_div noVNC_hidden noVNC_hide_on_disconnect" >
                     <input type="image" alt="Drag" src="app/images/drag.svg"
@@ -337,7 +367,8 @@
                                                 <label class="switch">
                                                     <input id="noVNC_setting_toggle_control_panel" type="checkbox" />
                                                     <span class="slider round"></span>
-                                                    <span class="slider-label">Enable KasmVNC Keyboard Shortcuts</span>
+                                                    <!-- TODO: Remove Kasm branding from settings label -->
+                                                    <span class="slider-label">Enable Keyboard Shortcuts</span>
                                                 </label>
                                             </li>
                                             <li>Ctrl+Shift+</li>
@@ -515,9 +546,10 @@
                                     <span>Version:</span>
                                     <span class="noVNC_version"></span>
 				    <span class="slider-label">
-                                        <a href="https://www.kasmweb.com/kasmvnc/docs/latest/index.html" target="_blank">
+                                        <!-- TODO: Hide/remove Kasm documentation link to avoid any visible Kasm branding -->
+                                        <!-- <a href="https://www.kasmweb.com/kasmvnc/docs/latest/index.html" target="_blank">
                                             Documentation
-                                        </a>
+                                        </a> -->
                                     </span>
                                 </li>
                             </ul>
