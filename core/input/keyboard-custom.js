@@ -5,10 +5,10 @@ export default class CustomKeyboard extends BaseKeyboard {
     constructor(screenInput, touchInput, keyboardInput) {
         super(screenInput, touchInput, keyboardInput);
 
-        this._Layout = "us";
-        this._lastLayoutChangeAt = 0;
+        this._Layout = "us"; // We add this to fix keyboard issue
+        this._lastLayoutChangeAt = 0; // (added) debounce timestamp
     }
-
+    // We add these functions to fix keyboard issue
     _detectLayout(key) {
         if (!key || key.length !== 1) return null;
 
@@ -19,7 +19,7 @@ export default class CustomKeyboard extends BaseKeyboard {
         if (isLatin)   return "us";
         return null;
     }
-
+    // Switch layout with debounce
     _switchLayout(layout) {
         if (!layout || layout === this._Layout) return;
 
@@ -40,11 +40,11 @@ export default class CustomKeyboard extends BaseKeyboard {
             Log.Debug("Skipping keydown, IME interaction, keycode: " + e.keyCode);
             return;
         }
-
+        // we added this line to disable window keys
         if (e.keyCode === 91 || e.keyCode === 92) {
             return;
         }
-
+        // Do not switch on space
         if (e.keyCode !== 32) {
             this._switchLayout(this._detectLayout(e.key));
         }
