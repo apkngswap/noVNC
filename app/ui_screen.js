@@ -163,8 +163,8 @@ const UI = {
         //UI.rfb.forcedResolutionX = UI.getSetting('forced_resolution_x', false);
         //UI.rfb.forcedResolutionY = UI.getSetting('forced_resolution_y', false);
         const resize_setting = UI.getSetting('resize', false, 'remote');
-        UI.rfb.clipViewport = resize_setting !== 'off';
-        UI.rfb.scaleViewport = resize_setting === 'scale';
+        UI.rfb.clipViewport = resize_setting !== 'scale';
+        UI.rfb.scaleViewport = resize_setting === 'off';
         UI.rfb.resizeSession = resize_setting === 'remote';
         UI.rfb.qualityLevel = parseInt(UI.getSetting('quality'));
         UI.rfb.dynamicQualityMin = parseInt(UI.getSetting('dynamic_quality_min'));
@@ -420,8 +420,8 @@ const UI = {
      applyResizeMode() {
         if (!UI.rfb) return;
         const resize_setting = UI.getSetting('resize');
-        UI.rfb.clipViewport = resize_setting !== 'off';
-        UI.rfb.scaleViewport = resize_setting === 'scale';
+        UI.rfb.clipViewport = resize_setting !== 'scale';
+        UI.rfb.scaleViewport = resize_setting === 'off';
         UI.rfb.resizeSession = resize_setting === 'remote' || UI.rfb.forcedResolutionX && UI.rfb.forcedResolutionY;
         UI.rfb.idleDisconnect = UI.getSetting('idle_disconnect');
         UI.rfb.videoQuality = UI.getSetting('video_quality');
