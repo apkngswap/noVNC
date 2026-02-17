@@ -261,6 +261,7 @@ const UI = {
         UI.initSetting('jpeg_video_quality', 5);
         UI.initSetting('webp_video_quality', 5);
         UI.initSetting('video_quality', 2);
+        UI.forceSetting('video_quality', 2, true);
         UI.initSetting('anti_aliasing', 0);
         UI.initSetting('video_area', 65);
         UI.initSetting('video_time', 5);
@@ -302,7 +303,7 @@ const UI = {
                 }
             }
             UI.initSetting('enable_webp', false);
-            UI.initSetting('resize', 'off');
+            UI.initSetting('resize', 'scale');
         } else {
             UI.initSetting('clipboard_up', true);
             UI.initSetting('clipboard_down', true);
@@ -479,7 +480,7 @@ const UI = {
             .addEventListener('touchstart', UI.keepControlbar);
         document.getElementById("noVNC_control_bar")
             .addEventListener('input', UI.keepControlbar);
-
+        
         document.getElementById("noVNC_control_bar_handle")
             .addEventListener('touchstart', UI.controlbarHandleMouseDown);
         document.getElementById("noVNC_control_bar_handle")
@@ -1240,7 +1241,7 @@ const UI = {
         UI.updateSetting('anti_aliasing', 0);
         UI.updateSetting('jpeg_video_quality', 5);
         UI.updateSetting('webp_video_quality', 5);
-        UI.updateSetting('video_quality', 2);
+        UI.forceSetting('video_quality', 2, true);
         UI.updateSetting('video_area', 65);
         UI.updateSetting('video_time', 5);
         UI.updateSetting('video_out_time', 3);
@@ -1490,7 +1491,7 @@ const UI = {
         UI.rfb.addEventListener("sharedSessionUserLeft", UI.sharedSessionUserLeft);
         UI.rfb.translateShortcuts = UI.getSetting('translate_shortcuts');
         UI.rfb.clipViewport = UI.getSetting('view_clip');
-        UI.rfb.scaleViewport = UI.getSetting('resize') === 'scale';
+        UI.rfb.scaleViewport = UI.getSetting('resize') === 'off';
         UI.rfb.resizeSession = UI.getSetting('resize') === 'remote';
         UI.rfb.qualityLevel = parseInt(UI.getSetting('quality'));
         UI.rfb.dynamicQualityMin = parseInt(UI.getSetting('dynamic_quality_min'));
@@ -1546,10 +1547,10 @@ const UI = {
         if (WebUtil.isInsideKasmVDI()) {
             if (window.addEventListener) { // Mozilla, Netscape, Firefox
                 //window.addEventListener('load', WindowLoad, false);
-                window.addEventListener('message', UI.receiveMessage, false);
+                window.addEventListener('message', UI.receiveMessageCompat, false);
             } else if (window.attachEvent) { //IE
                 window.attachEvent('onload', WindowLoad);
-                window.attachEvent('message', UI.receiveMessage);
+                window.attachEvent('message', UI.receiveMessageCompat);
             }
             if (UI.rfb.clipboardDown){
                 UI.rfb.addEventListener("clipboard", UI.clipboardRx);
@@ -1725,6 +1726,16 @@ const UI = {
     },
 
     //receive message from parent window
+    receiveMessageCompat(event) {
+        if (event?.data?.action === 'setvideoquality' &&
+            event.data.value === undefined &&
+            event.data.qualityLevel !== undefined) {
+            event.data.value = event.data.qualityLevel;
+        }
+        return UI.receiveMessage(event);
+    },
+
+    //receive message from parent window
     receiveMessage(event) {
         if (event.data && event.data.action) {
             Log.Debug("Received message from parent window: " + event.data.action);
@@ -1735,15 +1746,8 @@ const UI = {
                     }
                     break;
                 case 'setvideoquality':
-                    if (event.data.qualityLevel !== undefined) {
-                        //apply preset mode values, but don't apply to connection
-                        UI.forceSetting('video_quality', parseInt(event.data.qualityLevel), false);
-                        // apply quality preset quality level and override some settings (fps)
-                        UI.updateQuality(event.data.frameRate);
-                    } else {
-                        UI.forceSetting('video_quality', parseInt(event.data.value), false);
-                        UI.updateQuality();
-                    }
+                    UI.forceSetting('video_quality', 2, true);
+                    UI.updateQuality(event.data.frameRate);
                     break;
                 case 'enable_game_mode':
                     if (UI.rfb && !UI.rfb.pointerRelative) {
@@ -1809,10 +1813,13 @@ const UI = {
                         UI.toggleWebRTC();
                     }
                     break;
-                case 'resize':
-                    UI.forceSetting('resize', event.data.value, false);
+                case 'resize': {
+                    let v = event.data.value;
+                    if (v === 'off') v = 'scale';
+                    UI.forceSetting('resize', v, false);
                     UI.applyResizeMode();
                     break;
+                }
                 case 'set_resolution':
                     if (UI.rfb) {
                         UI.rfb.forcedResolutionX = event.data.value_x;
@@ -1951,11 +1958,11 @@ const UI = {
     applyResizeMode() {
         if (!UI.rfb) return;
         const resize_setting = UI.getSetting('resize');
-        UI.rfb.clipViewport = resize_setting !== 'off';
-        UI.rfb.scaleViewport = resize_setting === 'scale';
+        UI.rfb.clipViewport = resize_setting !== 'scale';
+        UI.rfb.scaleViewport = resize_setting === 'off';
         UI.rfb.resizeSession = resize_setting === 'remote';
         UI.rfb.idleDisconnect = UI.getSetting('idle_disconnect');
-        UI.rfb.videoQuality = UI.getSetting('video_quality');
+        UI.rfb.videoQuality = parseInt(UI.getSetting('video_quality'));
         UI.rfb.enableWebP = UI.getSetting('enable_webp');
         UI.rfb.enableHiDpi = UI.getSetting('enable_hidpi');
         UI.rfb.threading = UI.getSetting('enable_threading');
@@ -2395,7 +2402,7 @@ const UI = {
     updateViewClip() {
         if (!UI.rfb) return;
 
-        const scaling = UI.getSetting('resize') === 'scale';
+        const scaling = UI.getSetting('resize') === 'off';
 
         if (scaling) {
             // Can't be clipping if viewport is scaled to fit
