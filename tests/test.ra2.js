@@ -1,6 +1,6 @@
 const expect = chai.expect;
 
-import RFB from '../core/rfb.js';
+import RFB from '../core/rfb-custom.js';
 
 import FakeWebSocket from './fake.websocket.js';
 

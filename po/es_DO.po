@@ -38,7 +38,7 @@ msgstr "Desconectando..."
 msgid "Disconnected"
 msgstr "Desconectado"
 
-#: ../app/ui.js:1052 ../core/rfb.js:248
+#: ../app/ui.js:1052 ../core/rfb-custom.js:248
 msgid "Must set host"
 msgstr "Debes configurar el host"
 
@@ -50,7 +50,7 @@ msgstr "Reconectando..."
 msgid "Password is required"
 msgstr "Contraseña es obligatoria"
 
-#: ../core/rfb.js:548
+#: ../core/rfb-custom.js:548
 msgid "Disconnect timeout"
 msgstr "Tiempo de desconexión agotado"
 

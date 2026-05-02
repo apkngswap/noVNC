@@ -4,7 +4,7 @@
  * Licensed under MPL 2.0 (see LICENSE.txt)
  */
 
-import RFB from '../core/rfb.js';
+import RFB from '../core/rfb-custom.js';
 import * as Log from '../core/util/logging.js';
 
 // Immediate polyfill

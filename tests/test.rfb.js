@@ -1,6 +1,6 @@
 const expect = chai.expect;
 
-import RFB from '../core/rfb.js';
+import RFB from '../core/rfb-custom.js';
 import Websock from '../core/websock.js';
 import ZStream from "../vendor/pako/lib/zlib/zstream.js";
 import { deflateInit, deflate } from "../vendor/pako/lib/zlib/deflate.js";
