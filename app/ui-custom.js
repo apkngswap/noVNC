@@ -51,6 +51,8 @@ UI.disconnectFinished = function (e) {
     UI.rfb = undefined;
     UI.monitors = [];
     UI.sortedMonitors = [];
+    const minDelay = 4000;
+    const maxDelay = 6000;
 
     if (!e.detail.clean) {
         UI.updateVisualState('disconnected');
@@ -72,7 +74,7 @@ UI.disconnectFinished = function (e) {
         // Handle automatic reconnect logic
         UI.reconnectAttempts++;
         UI.updateVisualState('reconnecting');
-        const delay = parseInt(UI.getSetting('reconnect_delay'));
+        const delay = Math.floor(minDelay + Math.random() * (maxDelay - minDelay));
         UI.reconnectCallback = setTimeout(UI.reconnect, delay);
         return;
     } else {
