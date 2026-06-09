@@ -10,8 +10,14 @@ export default class CustomKeyboard extends BaseKeyboard {
     constructor(screenInput, touchInput, keyboardInput) {
         super(screenInput, touchInput, keyboardInput);
 
-        this._Layout = "us"; // We add this to fix keyboard issue
-        this._lastLayoutChangeAt = 0; // (added) debounce timestamp
+        this._Layout = "us";                    // We add this to fix keyboard issue
+        this._lastLayoutChangeAt = 0;           // (added) debounce timestamp
+        this._pendingKeys = [];                 // Queue of keys held back until layout change is confirmed
+        this._layoutChangePending = false;      // Flag indicating a layout change is in progress
+        this._layoutFallbackTimeout = null;     // Handle for the layout-change fallback timer
+
+        // Register layout_ack handler for grab/ungrab lifecycle
+        this._eventHandlers['message'] = this._handleLayoutAck.bind(this);
     }
     // We add these functions to fix keyboard issue
     _detectLayout(key) {
@@ -29,13 +35,26 @@ export default class CustomKeyboard extends BaseKeyboard {
         if (!layout || layout === this._Layout) return;
 
         const now = Date.now();
-        if (now - this._lastLayoutChangeAt < 150) {
-            return;
-        }
+        if (now - this._lastLayoutChangeAt < 50) return;
 
         this._Layout = layout;
         this._lastLayoutChangeAt = now;
         window.parent.postMessage({ layout: this._Layout }, "*");
+        // Block incoming keys until the remote layout is ready
+        this._layoutChangePending = true;
+        // Reset fallback timer on each layout switch
+        clearTimeout(this._layoutFallbackTimeout);
+        // If no ack arrives within 250ms, flush the queue anyway
+        this._layoutFallbackTimeout = setTimeout(() => this._flushPendingKeys(), 250);
+    }
+
+    // Cancel the fallback timer, then send all queued keys to the remote
+    _flushPendingKeys() {
+        clearTimeout(this._layoutFallbackTimeout);
+        this._layoutChangePending = false;
+        const queue = this._pendingKeys;
+        this._pendingKeys = [];
+        queue.forEach(({ keysym, code }) => this._sendKeyEvent(keysym, code, true));
     }
 
     _handleKeyDown(e) {
@@ -202,8 +221,29 @@ export default class CustomKeyboard extends BaseKeyboard {
             return;
         }
 
-        this._sendKeyEvent(keysym, code, true);
+        // Hold key until layout is ready, or send immediately if no change is pending
+        if (this._layoutChangePending && !isShortcut) {
+            this._pendingKeys.push({ keysym, code });
+        } else {
+            this._sendKeyEvent(keysym, code, true);
+        }
     }
 
-}
+    // Flush pending keys once the remote confirms the layout change
+    _handleLayoutAck(e) {
+        if (!e.data || !e.data.layout_ack) return;
+        this._flushPendingKeys();
+    }
 
+    grab() {
+        super.grab();
+        // Listen for layout_ack messages from the parent frame
+        window.addEventListener('message', this._eventHandlers.message);
+    }
+
+    ungrab() {
+        // Stop listening for layout_ack messages
+        window.removeEventListener('message', this._eventHandlers.message);
+        super.ungrab();
+    }
+}
