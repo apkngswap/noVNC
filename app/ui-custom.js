@@ -7,11 +7,20 @@ const PAGE_TITLE = "SwapVNC";
 UI.reconnectAttempts = 0;
 UI.maxReconnectAttempts = 5;
 
-// Override reconnect default to true
+// Detect touch-only devices (phones / tablets), not desktops with touchscreens
+UI.isTouchOnly = function () {
+    return window.matchMedia('(pointer: coarse)').matches;
+};
+
+// Override reconnect default to true; show keyboard control panel only on touch-only devices
 const initSettingsOriginal = UI.initSettings;
 UI.initSettings = function () {
     initSettingsOriginal.call(UI);
     UI.forceSetting('reconnect', true);
+
+    const touchOnly = UI.isTouchOnly();
+    UI.forceSetting('virtual_keyboard_visible', touchOnly, false);
+    UI.toggleKeyboardControls();
 };
 
 // Add cancel reconnect button support
